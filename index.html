@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>16-BIT FIGHTER: Moopy, Simon & Xeera</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="min-h-screen flex flex-col bg-[#090710] text-slate-100">
+
+  <!-- MAIN ARENA & BOTTOM BUTTONS -->
+  <main class="flex-1 flex flex-col items-center justify-between p-2 sm:p-3 gap-2 max-w-6xl w-full mx-auto">
+
+    <!-- 16-BIT CANVAS VIEWPORT -->
+    <div id="stageContainer" class="relative w-full aspect-[16/9] max-h-[75vh] pixel-box overflow-hidden scanlines flex items-center justify-center bg-[#0d0a1a]">
+      <canvas id="gameCanvas" class="w-full h-full block pixelated"></canvas>
+
+      <!-- TOMBOL IKON 3 GARIS VERTIKAL DI POJOK KANAN ATAS -->
+      <button id="btnToggleMenu" type="button" title="Buka Menu" class="absolute top-2.5 right-2.5 z-30 pixel-btn w-10 h-10 flex items-center justify-center gap-1 bg-[#161129]/90 border-2 border-amber-400 hover:border-amber-200">
+        <span class="block w-1 h-5 bg-amber-300"></span>
+        <span class="block w-1 h-5 bg-amber-300"></span>
+        <span class="block w-1 h-5 bg-amber-300"></span>
+      </button>
+
+      <!-- BADGE MODE KARAKTER (POJOK KIRI BAWAH CANVAS) -->
+      <div class="absolute bottom-2 left-2.5 z-20 pointer-events-none">
+        <span id="modeBadge" class="font-pixel text-[8px] px-2 py-1 bg-indigo-950/90 border border-indigo-400 text-indigo-200">MOOPY: STICKMAN</span>
+      </div>
+
+      <!-- ========================================================= -->
+      <!-- TAHAP 1: MENU PLAY (LAYAR PEMBUKA UTAMA SEBELUM MAIN)     -->
+      <!-- ========================================================= -->
+      <div id="startPlayOverlay" class="fixed lg:absolute inset-0 bg-[#080612]/90 z-[45] flex flex-col items-center justify-center p-4 text-center">
+        <div id="customMenuBannerBox" class="mb-3 hidden">
+          <img id="customMenuBannerImg" alt="Custom Menu Asset" class="max-h-24 mx-auto border-2 border-amber-400 rounded" />
+        </div>
+        <div class="pixel-box p-6 sm:p-8 max-w-md w-full border-4 border-amber-400 bg-[#140f26]/95 flex flex-col items-center">
+          <div class="font-pixel text-[9px] text-fuchsia-400 mb-2 tracking-widest">16-BIT GOTHIC ARENA BRAWLER</div>
+          <h1 class="font-pixel text-xl sm:text-2xl text-amber-300 mb-2 drop-shadow-[2px_2px_0_#000]">SHADOW LEGENDS</h1>
+          <p class="font-vt text-lg sm:text-xl text-slate-300 mb-6">
+            Moopy • Simon • Xeera
+          </p>
+
+          <button id="btnPlayNow" type="button" class="w-full pixel-btn pixel-btn-amber py-3.5 text-sm sm:text-base text-amber-100 mb-3">
+            ▶ PLAY GAME
+          </button>
+
+          <div class="grid grid-cols-2 gap-2 w-full">
+            <button id="btnPlayAssets" type="button" class="pixel-btn pixel-btn-cyan py-2 text-[9px] text-sky-100">
+              ASSETS CUSTOM
+            </button>
+            <button id="btnPlayMoves" type="button" class="pixel-btn py-2 text-[9px] text-slate-200">
+              PANDUAN SKILL
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================================= -->
+      <!-- TAHAP 2: MENU CHOOSE CHARACTER (MOOPY, SIMON, XEERA)      -->
+      <!-- ========================================================= -->
+      <div id="charSelectOverlay" class="fixed lg:absolute inset-0 bg-[#07050e]/95 z-40 flex flex-col items-center justify-start lg:justify-center p-3 sm:p-5 text-center overflow-y-auto hidden">
+        <div class="font-pixel text-[9px] text-amber-400 mb-1 tracking-widest">CHOOSE YOUR FIGHTER</div>
+        <h2 class="font-pixel text-sm sm:text-lg text-white mb-3 drop-shadow-[2px_2px_0_#000]">PILIH KARAKTER</h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 max-w-3xl w-full mb-4">
+          <!-- KARTU 1: MOOPY -->
+          <div id="cardSelectMoopy" class="pixel-box p-3 cursor-pointer border-4 border-cyan-400 bg-[#1c1538] transition-all flex flex-col items-center text-center">
+            <div class="w-14 h-14 bg-[#0b0816] border-2 border-cyan-400 mb-2 flex items-center justify-center rounded">
+              <div class="relative w-5 h-9 bg-white rounded-t-full">
+                <div class="absolute top-1 left-0 right-0 h-1.5 bg-rose-500"></div>
+                <div class="absolute top-2 right-1 w-1.5 h-1.5 bg-sky-400 rounded-full"></div>
+              </div>
+            </div>
+            <div class="font-pixel text-xs text-cyan-300 mb-0.5">MOOPY</div>
+            <div class="font-pixel text-[7px] text-fuchsia-300 mb-1.5">DIRE WOLF BRAWLER</div>
+            <p class="font-vt text-base text-slate-300 leading-tight">
+              Kombo pukulan cakar & tendangan, Ultimate Dire Wolf 4-kaki (P), Roar Stun (U), & Laser Beam (I).
+            </p>
+          </div>
+
+          <!-- KARTU 2: SIMON -->
+          <div id="cardSelectSimon" class="pixel-box p-3 cursor-pointer border-4 border-[#4a3f6b] bg-[#120e24] opacity-80 transition-all flex flex-col items-center text-center">
+            <div class="w-14 h-14 bg-[#0b0816] border-2 border-amber-400 mb-2 flex items-center justify-center rounded">
+              <div class="relative w-5 h-9 bg-[#0a0a0f] border border-cyan-400 rounded-t-full shadow-[0_0_8px_#38bdf8]">
+                <div class="absolute -top-2 left-0 w-1.5 h-2 bg-amber-400 rounded-t"></div>
+                <div class="absolute -top-2 right-0 w-1.5 h-2 bg-cyan-400 rounded-t"></div>
+                <div class="absolute top-2 right-1 w-1.5 h-1.5 bg-yellow-300 rounded-full"></div>
+              </div>
+            </div>
+            <div class="font-pixel text-xs text-amber-300 mb-0.5">SIMON</div>
+            <div class="font-pixel text-[7px] text-sky-300 mb-1.5">THUNDER DEVIL MAGE</div>
+            <p class="font-vt text-base text-slate-300 leading-tight">
+              Tinju & tendangan petir, Double Jump + Kick menukik, evolusi Thunder Devil (P), 3x Blitz (U), & Petir Stun (I).
+            </p>
+          </div>
+
+          <!-- KARTU 3: XEERA (SAMURAI AME NO HABAKIRI) -->
+          <div id="cardSelectXeera" class="pixel-box p-3 cursor-pointer border-4 border-[#4a3f6b] bg-[#120e24] opacity-80 transition-all flex flex-col items-center text-center">
+            <div class="w-14 h-14 bg-[#0b0816] border-2 border-purple-400 mb-2 flex items-center justify-center rounded">
+              <div class="relative w-5 h-9 bg-slate-100 rounded-t-full shadow-[0_0_8px_#a855f7]">
+                <div class="absolute top-2 right-1 w-1.5 h-1.5 bg-rose-600 rounded-full"></div>
+                <div class="absolute top-3 -left-3 w-3 h-5 bg-purple-600 rounded-l"></div>
+                <div class="absolute top-4 -right-3 w-6 h-1 bg-fuchsia-400 -rotate-12"></div>
+              </div>
+            </div>
+            <div class="font-pixel text-xs text-purple-300 mb-0.5">XEERA</div>
+            <div class="font-pixel text-[7px] text-rose-400 mb-1.5">SAMURAI AME NO HABAKIRI</div>
+            <p class="font-vt text-base text-slate-300 leading-tight">
+              3x tebasan pedang + Slash Angin Ungu, Air Glide Kick, Tebasan Kilat & Giant Slash (U), Slash Barrier (I), & Evolusi 39s (P).
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button id="btnBackToPlay" type="button" class="pixel-btn px-4 py-2.5 text-[10px] text-slate-300">
+            ◀ KEMBALI
+          </button>
+          <button id="btnConfirmChar" type="button" class="pixel-btn pixel-btn-amber px-6 py-2.5 text-xs text-amber-100">
+            MULAI PERTARUNGAN!
+          </button>
+        </div>
+      </div>
+
+      <!-- MENU POPUP OVERLAY (SAAT TOMBOL 3 GARIS DITEKAN) -->
+      <div id="mainMenuOverlay" class="fixed lg:absolute inset-0 bg-black/85 z-[35] flex flex-col items-center justify-center p-4 text-center hidden">
+        <div class="pixel-box p-4 sm:p-5 max-w-lg w-full border-4 border-amber-400 bg-[#161129]/95">
+          <div class="font-pixel text-[9px] text-fuchsia-400 mb-1">GAME MENU & PENGATURAN</div>
+          <h2 class="font-pixel text-base sm:text-xl text-amber-300 mb-3 drop-shadow-[2px_2px_0_#000]">16-BIT FIGHTER</h2>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3 text-left">
+            <div class="bg-[#0c0918] border-2 border-[#3b2f63] p-2 flex items-center justify-between">
+              <label for="scaleSelect" class="font-pixel text-[8px] text-slate-300">UKURAN:</label>
+              <select id="scaleSelect" class="bg-transparent font-pixel text-[9px] text-amber-300 focus:outline-none cursor-pointer">
+                <option value="1" selected class="bg-[#1c1633]">KECIL (1x)</option>
+                <option value="1.25" class="bg-[#1c1633]">SEDANG (1.25x)</option>
+                <option value="1.5" class="bg-[#1c1633]">BESAR (1.5x)</option>
+              </select>
+            </div>
+
+            <div class="bg-[#0c0918] border-2 border-[#3b2f63] p-2 flex items-center justify-between">
+              <label for="dummySelect" class="font-pixel text-[8px] text-slate-300">DUMMY:</label>
+              <select id="dummySelect" class="bg-transparent font-pixel text-[9px] text-emerald-300 focus:outline-none cursor-pointer">
+                <option value="static" selected class="bg-[#1c1633]">DIAM (TRAINING)</option>
+                <option value="patrol" class="bg-[#1c1633]">JALAN (PATROL)</option>
+                <option value="jump" class="bg-[#1c1633]">LOMPAT (JUMP)</option>
+                <option value="spar" class="bg-[#1c1633]">SPARRING AI</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 mb-3">
+            <button id="btnChangeChar" type="button" class="col-span-2 pixel-btn pixel-btn-cyan py-2 text-[9px] text-sky-100">
+              CHOOSE CHARACTER (MOOPY / SIMON / XEERA)
+            </button>
+            <button id="btnOpenAssets" type="button" class="pixel-btn pixel-btn-amber py-2 text-[9px] text-amber-100">
+              ASSETS CUSTOM
+            </button>
+            <button id="btnOpenMoves" type="button" class="pixel-btn py-2 text-[9px] text-sky-200">
+              DAFTAR SKILL
+            </button>
+            <button id="btnMute" type="button" class="pixel-btn py-2 text-[9px] text-emerald-300">
+              SFX: ON
+            </button>
+            <button id="btnResetFight" type="button" class="pixel-btn pixel-btn-crimson py-2 text-[9px] text-rose-100">
+              RESET ARENA
+            </button>
+          </div>
+
+          <button id="btnStartGame" type="button" class="w-full pixel-btn pixel-btn-amber py-2.5 text-xs text-amber-100">
+            LANJUT BERTARUNG!
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MENU BAWAH: HANYA TOMBOL HURUF RINGKAS & COOLDOWN -->
+    <section class="w-full pixel-box px-3 py-2 bg-[#130f24]">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+
+        <!-- KIRI: TOMBOL GERAK W, A, S, L -->
+        <div class="flex items-center gap-1.5 sm:gap-2">
+          <button data-key="w" type="button" class="key-btn pixel-btn w-12 h-11 sm:w-14 sm:h-12 flex items-center justify-center">
+            <span class="text-xs sm:text-sm text-amber-300">W</span>
+          </button>
+          <button data-key="a" type="button" class="key-btn pixel-btn w-12 h-11 sm:w-14 sm:h-12 flex items-center justify-center">
+            <span class="text-xs sm:text-sm text-amber-300">A</span>
+          </button>
+          <button data-key="s" type="button" class="key-btn pixel-btn w-12 h-11 sm:w-14 sm:h-12 flex items-center justify-center">
+            <span class="text-xs sm:text-sm text-amber-300">S</span>
+          </button>
+          <button data-key="l" type="button" class="key-btn relative pixel-btn w-12 h-11 sm:w-14 sm:h-12 flex flex-col items-center justify-center">
+            <span class="text-xs sm:text-sm text-violet-300">L</span>
+            <span id="cdTextL" class="font-vt text-xs text-amber-300 leading-none"></span>
+          </button>
+        </div>
+
+        <!-- KANAN: TOMBOL J, K, P, U, I -->
+        <div class="flex items-center gap-1.5 sm:gap-2">
+          <button data-key="j" type="button" class="key-btn pixel-btn pixel-btn-cyan w-12 h-11 sm:w-14 sm:h-12 flex items-center justify-center">
+            <span class="text-xs sm:text-sm text-cyan-200">J</span>
+          </button>
+
+          <button data-key="k" type="button" class="key-btn pixel-btn w-12 h-11 sm:w-14 sm:h-12 flex items-center justify-center border-emerald-400 bg-emerald-950/80">
+            <span class="text-xs sm:text-sm text-emerald-300">K</span>
+          </button>
+
+          <button data-key="p" type="button" class="key-btn relative pixel-btn pixel-btn-amber w-12 h-11 sm:w-14 sm:h-12 flex flex-col items-center justify-center">
+            <span class="text-xs sm:text-sm text-amber-200">P</span>
+            <span id="cdTextP" class="font-vt text-xs text-white leading-none"></span>
+          </button>
+
+          <button data-key="u" type="button" class="key-btn relative pixel-btn w-12 h-11 sm:w-14 sm:h-12 flex flex-col items-center justify-center border-yellow-400 bg-yellow-950/80">
+            <span class="text-xs sm:text-sm text-yellow-300">U</span>
+            <span id="cdTextU" class="font-vt text-xs text-white leading-none"></span>
+          </button>
+
+          <button data-key="i" type="button" class="key-btn relative pixel-btn pixel-btn-crimson w-12 h-11 sm:w-14 sm:h-12 flex flex-col items-center justify-center">
+            <span class="text-xs sm:text-sm text-rose-200">I</span>
+            <span id="cdTextI" class="font-vt text-xs text-white leading-none"></span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL UPLOAD ASSETS -->
+  <div id="assetsModal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 hidden">
+    <div class="pixel-box max-w-xl w-full p-4 sm:p-5 bg-[#161129] border-4 border-amber-400 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b-2 border-[#3b2f63] pb-2 mb-3">
+        <h3 class="font-pixel text-xs sm:text-sm text-amber-300">KELOLA ASSETS FOLDER / UPLOAD</h3>
+        <button id="btnCloseAssets" type="button" class="pixel-btn px-2.5 py-1 text-[10px] text-rose-300">X</button>
+      </div>
+      <p class="font-vt text-lg text-slate-300 mb-3 leading-snug">
+        Taruh file Anda di dalam folder <span class="text-amber-300">assets/</span> atau pilih langsung lewat tombol di bawah ini:
+      </p>
+
+      <div class="space-y-2.5 font-vt text-lg">
+        <div class="bg-[#0e0b1c] border-2 border-[#352a59] p-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <div class="font-pixel text-[10px] text-cyan-300">1. BACKGROUND (assets/background/stage.png)</div>
+            <div id="statusBgAsset" class="text-sm text-slate-400">Default: 16-Bit Gothic Lantern & Crow</div>
+          </div>
+          <input id="inputBgAsset" type="file" accept="image/*" class="text-xs text-slate-300 file:mr-2 file:py-1 file:px-2 file:border-0 file:bg-indigo-700 file:text-white file:font-pixel file:text-[9px] cursor-pointer" />
+        </div>
+
+        <div class="bg-[#0e0b1c] border-2 border-[#352a59] p-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <div class="font-pixel text-[10px] text-rose-400">2. HEARTBAR (assets/ui/heartbar.png)</div>
+            <div id="statusHeartAsset" class="text-sm text-slate-400">Default: 16-Bit Horned Skull Heartbar</div>
+          </div>
+          <input id="inputHeartAsset" type="file" accept="image/*" class="text-xs text-slate-300 file:mr-2 file:py-1 file:px-2 file:border-0 file:bg-rose-700 file:text-white file:font-pixel file:text-[9px] cursor-pointer" />
+        </div>
+
+        <div class="bg-[#0e0b1c] border-2 border-[#352a59] p-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <div class="font-pixel text-[10px] text-amber-300">3. MENU (assets/ui/menu.png)</div>
+            <div id="statusMenuAsset" class="text-sm text-slate-400">Default: Built-in Title Banner</div>
+          </div>
+          <input id="inputMenuAsset" type="file" accept="image/*" class="text-xs text-slate-300 file:mr-2 file:py-1 file:px-2 file:border-0 file:bg-amber-700 file:text-white file:font-pixel file:text-[9px] cursor-pointer" />
+        </div>
+
+        <div class="bg-[#0e0b1c] border-2 border-[#352a59] p-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <div class="font-pixel text-[10px] text-emerald-300">4. KARAKTER NORMAL</div>
+            <div id="statusMoopyAsset" class="text-sm text-slate-400">Default: 16-Bit Fighter Model</div>
+          </div>
+          <input id="inputMoopyAsset" type="file" accept="image/*" class="text-xs text-slate-300 file:mr-2 file:py-1 file:px-2 file:border-0 file:bg-emerald-700 file:text-white file:font-pixel file:text-[9px] cursor-pointer" />
+        </div>
+
+        <div class="bg-[#0e0b1c] border-2 border-[#352a59] p-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <div class="font-pixel text-[10px] text-fuchsia-300">5. KARAKTER EVOLUSI (ULTIMATE)</div>
+            <div id="statusWolfAsset" class="text-sm text-slate-400">Default: 16-Bit Evolution Model</div>
+          </div>
+          <input id="inputWolfAsset" type="file" accept="image/*" class="text-xs text-slate-300 file:mr-2 file:py-1 file:px-2 file:border-0 file:bg-fuchsia-700 file:text-white file:font-pixel file:text-[9px] cursor-pointer" />
+        </div>
+      </div>
+
+      <div class="mt-4 flex flex-wrap justify-between gap-2">
+        <button id="btnResetAssets" type="button" class="pixel-btn pixel-btn-crimson px-3 py-2 text-[9px] text-rose-100">
+          RESET KE DEFAULT
+        </button>
+        <button id="btnSaveAssets" type="button" class="pixel-btn pixel-btn-amber px-4 py-2 text-[9px] text-amber-100">
+          SIMPAN & TUTUP
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL PANDUAN KOMBO MOOPY, SIMON, & XEERA -->
+  <div id="movesModal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 hidden">
+    <div class="pixel-box max-w-xl w-full p-4 sm:p-5 bg-[#161129] border-4 border-sky-400 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b-2 border-[#3b2f63] pb-2 mb-3">
+        <h3 class="font-pixel text-xs sm:text-sm text-sky-300">PANDUAN SKILL KARAKTER</h3>
+        <button id="btnCloseMoves" type="button" class="pixel-btn px-2.5 py-1 text-[10px] text-rose-300">X</button>
+      </div>
+
+      <div class="space-y-3 font-vt text-lg">
+        <div class="bg-[#0e0b1c] border-2 border-[#352a59] p-3">
+          <div class="font-pixel text-[10px] text-purple-300 mb-1">1. XEERA (SAMURAI — PEDANG AME NO HABAKIRI)</div>
+          <ul class="space-y-1 text-slate-200">
+            <li>• <span class="text-cyan-400 font-bold">J (3x Tebasan)</span> : 3x tebasan pedang Ame no Habakiri diakhiri <span class="text-purple-400 font-bold">Slash Angin Ungu</span></li>
+            <li>• <span class="text-emerald-400 font-bold">K (Khusus Melompat / Double Jump)</span> : Meluncur cepat menukik dengan pedangnya</li>
+            <li>• <span class="text-yellow-300 font-bold">U (Sebelum Evolusi - CD 2s)</span> : Melesat cepat & menebas lawan</li>
+            <li>• <span class="text-rose-400 font-bold">I (Sebelum Evolusi - CD 5s)</span> : Membuat Slash Barrier (lawan yang masuk terkena damage)</li>
+            <li>• <span class="text-fuchsia-400 font-bold">P (Evolusi - Durasi 39 Detik)</span> : Mata Merah menyala & Jubah Ungu</li>
+            <li>• <span class="text-yellow-300 font-bold">U (Saat Evolusi - CD 2s)</span> : Mengangkat pedang & melepas <span class="text-purple-300 font-bold">Tebasan Besar Ungu</span> ke depan</li>
+            <li>• <span class="text-rose-400 font-bold">I (Saat Evolusi - CD 5s)</span> : Slash Barrier membesar drastis & bertahan lama (<span class="text-rose-300 font-bold">10 Detik</span>)</li>
+          </ul>
+        </div>
+
+        <div class="bg-[#0e0b1c] border-2 border-[#352a59] p-3">
+          <div class="font-pixel text-[10px] text-amber-300 mb-1">2. SIMON (THUNDER MAGE / DEVIL)</div>
+          <ul class="space-y-1 text-slate-200">
+            <li>• <span class="text-cyan-400 font-bold">J / K</span> : Kombo tinju & tendangan petir | <span class="text-amber-300 font-bold">2x W + K</span> : Melesat ke target</li>
+            <li>• <span class="text-fuchsia-400 font-bold">P</span> : Evolusi Tanduk Thunder Devil | <span class="text-yellow-300 font-bold">U</span> : 3x Blitz | <span class="text-rose-400 font-bold">I</span> : Petir Stun</li>
+          </ul>
+        </div>
+
+        <div class="bg-[#0e0b1c] border-2 border-[#352a59] p-3">
+          <div class="font-pixel text-[10px] text-cyan-300 mb-1">3. MOOPY (DIRE WOLF BRAWLER)</div>
+          <ul class="space-y-1 text-slate-200">
+            <li>• <span class="text-cyan-400 font-bold">J / K</span> : Kombo pukulan cakaran & variasi tendangan</li>
+            <li>• <span class="text-fuchsia-400 font-bold">P</span> : Mode Dire Wolf 4-Kaki | <span class="text-yellow-300 font-bold">U</span> : Roar Stun | <span class="text-rose-400 font-bold">I</span> : Laser Beam</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mt-4 text-right">
+        <button id="btnGotItMoves" type="button" class="pixel-btn pixel-btn-cyan px-4 py-2 text-[9px] text-sky-100">
+          MENGERTI!
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULAR JAVASCRIPT FILES -->
+  <script src="js/config.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/particles.js"></script>
+  <script src="js/fighter.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

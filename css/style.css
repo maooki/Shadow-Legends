@@ -1,0 +1,124 @@
+:root {
+  --pixel-font: 'Press Start 2P', monospace;
+  --pixel-sub: 'VT323', monospace;
+}
+
+* {
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #0b0914;
+  color: #f8fafc;
+  font-family: var(--pixel-sub);
+  overflow-x: hidden;
+}
+
+.font-pixel {
+  font-family: var(--pixel-font);
+  letter-spacing: 0.04em;
+}
+
+.font-vt {
+  font-family: var(--pixel-sub);
+}
+
+/* Mode 16-Bit: Halus dan tajam tanpa kotak-kotak kasar */
+.pixelated {
+  image-rendering: auto;
+}
+
+.pixel-box {
+  background: #141026;
+  border: 3px solid #4a3f6b;
+  border-radius: 4px;
+  box-shadow:
+    inset -2px -2px 0px #090712,
+    inset 2px 2px 0px #2a2248,
+    0 4px 10px rgba(0, 0, 0, 0.6);
+}
+
+.pixel-btn {
+  font-family: var(--pixel-font);
+  background: #2b214c;
+  border: 2px solid #7c6bb0;
+  border-radius: 4px;
+  box-shadow:
+    inset -2px -2px 0px #150f29,
+    inset 2px 2px 0px #4c3d7a,
+    0 3px 0 #080611;
+  transition: transform 0.06s ease, background 0.1s ease;
+  cursor: pointer;
+}
+
+.pixel-btn:hover {
+  background: #3b2d66;
+  border-color: #a78bfa;
+}
+
+.pixel-btn:active,
+.pixel-btn.active-key {
+  transform: translateY(3px);
+  box-shadow: inset 2px 2px 0px #150f29, 0 0px 0 #080611;
+  background: #5b21b6;
+  border-color: #f472b6;
+}
+
+.pixel-btn-amber {
+  background: #78350f;
+  border-color: #f59e0b;
+  box-shadow:
+    inset -2px -2px 0px #451a03,
+    inset 2px 2px 0px #b45309,
+    0 3px 0 #080611;
+}
+
+.pixel-btn-amber:hover {
+  background: #92400e;
+  border-color: #fbbf24;
+}
+
+.pixel-btn-cyan {
+  background: #0f3d5e;
+  border-color: #38bdf8;
+  box-shadow:
+    inset -2px -2px 0px #082032,
+    inset 2px 2px 0px #0284c7,
+    0 3px 0 #080611;
+}
+
+.pixel-btn-cyan:hover {
+  background: #0369a1;
+  border-color: #7dd3fc;
+}
+
+.pixel-btn-crimson {
+  background: #5c1127;
+  border-color: #f43f5e;
+  box-shadow:
+    inset -2px -2px 0px #330613,
+    inset 2px 2px 0px #be123c,
+    0 3px 0 #080611;
+}
+
+.pixel-btn-crimson:hover {
+  background: #881337;
+  border-color: #fb7185;
+}
+
+.scanlines::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%,
+    rgba(0, 0, 0, 0.12) 50%
+  );
+  background-size: 100% 3px;
+  pointer-events: none;
+  z-index: 15;
+}
